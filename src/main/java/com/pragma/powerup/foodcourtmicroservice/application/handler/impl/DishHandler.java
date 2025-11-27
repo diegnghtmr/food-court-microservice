@@ -16,6 +16,8 @@ import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishUpda
 import com.pragma.powerup.foodcourtmicroservice.infrastructure.security.CustomUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -46,5 +48,12 @@ public class DishHandler implements IDishHandler {
         
         DishModel updatedDish = dishServicePort.updateDishActiveState(id, isActive, userId);
         return dishResponseMapper.toResponse(updatedDish);
+    }
+
+    @Override
+    public List<DishResponse> getDishesByRestaurant(Long restaurantId, Integer page, Integer size) {
+        return dishServicePort.getDishesByRestaurant(restaurantId, page, size).stream()
+                .map(dishResponseMapper::toResponse)
+                .toList();
     }
 }

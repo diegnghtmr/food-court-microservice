@@ -15,6 +15,9 @@ import com.pragma.powerup.foodcourtmicroservice.infrastructure.output.jpa.reposi
 import com.pragma.powerup.foodcourtmicroservice.infrastructure.output.jpa.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import org.springframework.data.domain.PageRequest;
+
 @RequiredArgsConstructor
 public class DishJpaAdapter implements IDishPersistencePort {
 
@@ -70,5 +73,14 @@ public class DishJpaAdapter implements IDishPersistencePort {
          return categoryRepository.findById(id)
                 .map(categoryEntityMapper::toModel)
                 .orElse(null);
+    }
+
+    @Override
+    public List<DishModel> getDishesByRestaurant(Long restaurantId, Integer page, Integer size) {
+        return dishRepository.findByRestaurantIdAndActive(
+                restaurantId, 
+                true, 
+                PageRequest.of(page, size)
+        ).map(dishEntityMapper::toModel).getContent();
     }
 }

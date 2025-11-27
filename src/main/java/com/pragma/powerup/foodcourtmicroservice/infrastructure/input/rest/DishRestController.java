@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishActiveRequest;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
+
 @RestController
 @RequestMapping("/dishes")
 @RequiredArgsConstructor
@@ -73,5 +77,15 @@ public class DishRestController {
     @PutMapping("/{id}/active")
     public DishResponse updateDishActiveState(@PathVariable Long id, @Valid @RequestBody DishActiveRequest dishActiveRequest) {
         return dishHandler.updateDishActiveState(id, dishActiveRequest.getActive());
+    }
+
+    @Operation(summary = "List dishes by restaurant", description = "Retrieves active dishes for a specific restaurant with pagination.")
+    @GetMapping("/restaurant/{idRestaurant}")
+    public List<DishResponse> getDishesByRestaurant(
+            @PathVariable Long idRestaurant,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size
+    ) {
+        return dishHandler.getDishesByRestaurant(idRestaurant, page, size);
     }
 }

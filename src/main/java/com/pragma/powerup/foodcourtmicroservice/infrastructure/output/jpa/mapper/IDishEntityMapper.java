@@ -9,9 +9,11 @@ import org.mapstruct.Mapping;
 public interface IDishEntityMapper {
     @Mapping(target = "restaurant.id", source = "restaurantId")
     @Mapping(target = "category.id", source = "categoryId")
+    @Mapping(target = "category.name", ignore = true)
     DishEntity toEntity(DishModel dishModel);
 
     @Mapping(target = "restaurantId", source = "restaurant.id")
     @Mapping(target = "categoryId", source = "category.id")
+    @Mapping(target = "categoryName", source = "category.name")
     DishModel toModel(DishEntity dishEntity);
 }
