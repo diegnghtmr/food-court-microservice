@@ -21,10 +21,4 @@ public class UserFeignAdapter implements IUserClientPort {
         }
         return new UserModel(response.getId(), response.getEmail(), response.getRole());
     }
-
-    @Override
-    public boolean validateOwnerRole(Long userId) {
-        Boolean hasOwnerRole = userClient.hasOwnerRole(userId);
-        return Boolean.TRUE.equals(hasOwnerRole);
-    }
 }

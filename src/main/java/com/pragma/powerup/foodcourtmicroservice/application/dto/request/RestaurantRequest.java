@@ -2,17 +2,23 @@ package com.pragma.powerup.foodcourtmicroservice.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class RestaurantRequest {
-    @NotBlank
+    @NotBlank(message = "Name is required")
+    @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Name can only contain alphanumeric characters")
     private String name;
-    @NotBlank
+    @NotBlank(message = "Address is required")
     private String address;
-    @NotBlank
+    @NotBlank(message = "Phone is required")
+    @Pattern(regexp = "^\\+?[0-9]{1,12}$", message = "Phone must be numeric, max 13 characters, can start with +")
     private String phone;
-    @NotBlank
+    @NotBlank(message = "NIT is required")
+    @Pattern(regexp = "^[0-9]+$", message = "NIT must be numeric only")
     private String nit;
-    @NotNull
+    @NotBlank(message = "Logo URL is required")
+    private String urlLogo;
+    @NotNull(message = "Owner ID is required")
     private Long ownerId;
 
     public String getName() {
@@ -45,6 +51,14 @@ public class RestaurantRequest {
 
     public void setNit(String nit) {
         this.nit = nit;
+    }
+
+    public String getUrlLogo() {
+        return urlLogo;
+    }
+
+    public void setUrlLogo(String urlLogo) {
+        this.urlLogo = urlLogo;
     }
 
     public Long getOwnerId() {

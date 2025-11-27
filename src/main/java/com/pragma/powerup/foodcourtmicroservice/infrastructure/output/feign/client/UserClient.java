@@ -15,7 +15,4 @@ public interface UserClient {
 
     @GetMapping("/users/{id}")
     UserResponse getUserById(@PathVariable("id") Long id);
-
-    @GetMapping("/users/{id}/roles/owner")
-    Boolean hasOwnerRole(@PathVariable("id") Long id);
 }

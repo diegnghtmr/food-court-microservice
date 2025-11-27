@@ -6,6 +6,7 @@ public class RestaurantModel {
     private String address;
     private String phone;
     private String nit;
+    private String urlLogo;
     private Long ownerId;
 
     public RestaurantModel() {
@@ -17,6 +18,7 @@ public class RestaurantModel {
         String address,
         String phone,
         String nit,
+        String urlLogo,
         Long ownerId
     ) {
         this.id = id;
@@ -24,6 +26,7 @@ public class RestaurantModel {
         this.address = address;
         this.phone = phone;
         this.nit = nit;
+        this.urlLogo = urlLogo;
         this.ownerId = ownerId;
     }
 
@@ -65,6 +68,14 @@ public class RestaurantModel {
 
     public void setNit(String nit) {
         this.nit = nit;
+    }
+
+    public String getUrlLogo() {
+        return urlLogo;
+    }
+
+    public void setUrlLogo(String urlLogo) {
+        this.urlLogo = urlLogo;
     }
 
     public Long getOwnerId() {
