@@ -8,4 +8,5 @@ import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishUpda
 public interface IDishHandler {
     DishResponse createDish(DishRequest dishRequest);
     DishResponse updateDish(Long id, DishUpdateRequest dishUpdateRequest);
+    DishResponse updateDishActiveState(Long id, boolean isActive);
 }

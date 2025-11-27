@@ -21,6 +21,8 @@ import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishUpda
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishActiveRequest;
+
 @RestController
 @RequestMapping("/dishes")
 @RequiredArgsConstructor
@@ -60,5 +62,16 @@ public class DishRestController {
     @PutMapping("/{id}")
     public DishResponse updateDish(@PathVariable Long id, @Valid @RequestBody DishUpdateRequest dishUpdateRequest) {
         return dishHandler.updateDish(id, dishUpdateRequest);
+    }
+
+    @Operation(summary = "Enable/Disable dish", description = "Updates the active state of a dish. Requires Owner role.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Dish active state updated"),
+        @ApiResponse(responseCode = "403", description = "Forbidden - User not owner"),
+        @ApiResponse(responseCode = "404", description = "Dish not found")
+    })
+    @PutMapping("/{id}/active")
+    public DishResponse updateDishActiveState(@PathVariable Long id, @Valid @RequestBody DishActiveRequest dishActiveRequest) {
+        return dishHandler.updateDishActiveState(id, dishActiveRequest.getActive());
     }
 }

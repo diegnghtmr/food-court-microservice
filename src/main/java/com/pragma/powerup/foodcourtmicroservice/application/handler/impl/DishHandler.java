@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishUpdateRequest;
 
+import com.pragma.powerup.foodcourtmicroservice.infrastructure.security.CustomUserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -33,6 +36,15 @@ public class DishHandler implements IDishHandler {
     public DishResponse updateDish(Long id, DishUpdateRequest dishUpdateRequest) {
         DishModel dishModel = dishRequestMapper.toModel(dishUpdateRequest);
         DishModel updatedDish = dishServicePort.updateDish(id, dishModel, dishUpdateRequest.getOwnerId());
+        return dishResponseMapper.toResponse(updatedDish);
+    }
+
+    @Override
+    public DishResponse updateDishActiveState(Long id, boolean isActive) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = userDetails.getId();
+        
+        DishModel updatedDish = dishServicePort.updateDishActiveState(id, isActive, userId);
         return dishResponseMapper.toResponse(updatedDish);
     }
 }
