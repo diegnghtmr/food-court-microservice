@@ -7,4 +7,6 @@ public interface IRestaurantServicePort {
     RestaurantModel createRestaurant(RestaurantModel restaurantModel);
 
     List<RestaurantModel> getRestaurants();
+    
+    List<RestaurantModel> getRestaurants(Integer page, Integer size);
 }

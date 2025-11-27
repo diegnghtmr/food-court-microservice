@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 @RestController
 @RequestMapping("/restaurants")
 @RequiredArgsConstructor
@@ -41,9 +43,12 @@ public class RestaurantRestController {
         return restaurantHandler.createRestaurant(restaurantRequest);
     }
 
-    @Operation(summary = "List restaurants", description = "Retrieves all restaurants registered in the platform.")
+    @Operation(summary = "List restaurants", description = "Retrieves all restaurants registered in the platform with pagination. Sorted alphabetically by name.")
     @GetMapping
-    public List<RestaurantResponse> getRestaurants() {
-        return restaurantHandler.getRestaurants();
+    public List<RestaurantResponse> getRestaurants(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size
+    ) {
+        return restaurantHandler.getRestaurants(page, size);
     }
 }

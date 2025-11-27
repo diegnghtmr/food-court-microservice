@@ -8,6 +8,9 @@ import com.pragma.powerup.foodcourtmicroservice.infrastructure.output.jpa.reposi
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 @RequiredArgsConstructor
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
 
@@ -24,6 +27,13 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     @Override
     public List<RestaurantModel> getAllRestaurants() {
         return restaurantEntityMapper.toModelList(restaurantRepository.findAll());
+    }
+
+    @Override
+    public List<RestaurantModel> getAllRestaurants(Integer page, Integer size) {
+        return restaurantEntityMapper.toModelList(
+            restaurantRepository.findAll(PageRequest.of(page, size, Sort.by("name").ascending())).getContent()
+        );
     }
 
     @Override
