@@ -7,6 +7,8 @@ import com.pragma.powerup.foodcourtmicroservice.domain.model.RestaurantModel;
 import com.pragma.powerup.foodcourtmicroservice.domain.spi.IDishPersistencePort;
 import java.math.BigDecimal;
 
+import java.util.List;
+
 public class DishUseCase implements IDishServicePort {
 
     private final IDishPersistencePort dishPersistencePort;
@@ -80,6 +82,15 @@ public class DishUseCase implements IDishServicePort {
         existingDish.setActive(isActive);
 
         return dishPersistencePort.saveDish(existingDish);
+    }
+
+    @Override
+    public List<DishModel> getDishesByRestaurant(Long restaurantId, Integer page, Integer size) {
+        RestaurantModel restaurant = dishPersistencePort.getRestaurantById(restaurantId);
+        if (restaurant == null) {
+            throw new IllegalArgumentException("Restaurant not found");
+        }
+        return dishPersistencePort.getDishesByRestaurant(restaurantId, page, size);
     }
 
     private void validateOwnership(RestaurantModel restaurant, Long requestOwnerId) {

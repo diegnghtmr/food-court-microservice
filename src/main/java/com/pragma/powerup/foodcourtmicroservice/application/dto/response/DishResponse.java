@@ -10,6 +10,7 @@ public class DishResponse {
     private String urlImage;
     private Long restaurantId;
     private Long categoryId;
+    private String categoryName;
     private boolean active;
 
     public Long getId() {
@@ -66,6 +67,14 @@ public class DishResponse {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public boolean isActive() {

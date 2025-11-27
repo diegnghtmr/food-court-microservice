@@ -9,4 +9,5 @@ public interface IDishPersistencePort {
     DishModel getDishById(Long id);
     RestaurantModel getRestaurantById(Long id);
     CategoryModel getCategoryById(Long id);
+    java.util.List<DishModel> getDishesByRestaurant(Long restaurantId, Integer page, Integer size);
 }
