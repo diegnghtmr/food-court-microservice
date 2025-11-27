@@ -36,6 +36,9 @@ public class RestaurantEntity {
     @Column(nullable = false, unique = true)
     private String nit;
 
+    @Column(name = "url_logo", nullable = false)
+    private String urlLogo;
+
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
 }

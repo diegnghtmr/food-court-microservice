@@ -4,6 +4,4 @@ import com.pragma.powerup.foodcourtmicroservice.domain.model.UserModel;
 
 public interface IUserClientPort {
     UserModel getUserById(Long id);
-
-    boolean validateOwnerRole(Long userId);
 }

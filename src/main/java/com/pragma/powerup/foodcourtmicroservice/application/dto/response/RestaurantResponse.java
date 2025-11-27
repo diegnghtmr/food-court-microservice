@@ -6,6 +6,7 @@ public class RestaurantResponse {
     private String address;
     private String phone;
     private String nit;
+    private String urlLogo;
     private Long ownerId;
 
     public Long getId() {
@@ -46,6 +47,14 @@ public class RestaurantResponse {
 
     public void setNit(String nit) {
         this.nit = nit;
+    }
+
+    public String getUrlLogo() {
+        return urlLogo;
+    }
+
+    public void setUrlLogo(String urlLogo) {
+        this.urlLogo = urlLogo;
     }
 
     public Long getOwnerId() {

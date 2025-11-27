@@ -4,6 +4,7 @@ import com.pragma.powerup.foodcourtmicroservice.domain.api.IRestaurantServicePor
 import com.pragma.powerup.foodcourtmicroservice.domain.model.RestaurantModel;
 import com.pragma.powerup.foodcourtmicroservice.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.foodcourtmicroservice.domain.spi.IUserClientPort;
+import com.pragma.powerup.foodcourtmicroservice.domain.model.UserModel;
 import java.util.List;
 
 public class RestaurantUseCase implements IRestaurantServicePort {
@@ -40,14 +41,22 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         if (isBlank(restaurantModel.getName())) {
             throw new IllegalArgumentException("Restaurant name is required");
         }
+        if (isBlank(restaurantModel.getUrlLogo())) {
+            throw new IllegalArgumentException("Restaurant logo URL is required");
+        }
         if (restaurantModel.getOwnerId() == null) {
             throw new IllegalArgumentException("Owner id is required");
         }
     }
 
     private void validateOwner(Long ownerId) {
-        if (!userClientPort.validateOwnerRole(ownerId)) {
-            throw new IllegalStateException("User is not allowed to create restaurants");
+        UserModel user = userClientPort.getUserById(ownerId);
+        if (user == null) {
+            throw new IllegalArgumentException("Owner not found");
+        }
+        // Assuming "PROPIETARIO" is the role name required
+        if (!"PROPIETARIO".equalsIgnoreCase(user.getRole()) && !"ROLE_OWNER".equalsIgnoreCase(user.getRole())) {
+             throw new IllegalArgumentException("User must be an owner (PROPIETARIO) to create a restaurant");
         }
     }
 
