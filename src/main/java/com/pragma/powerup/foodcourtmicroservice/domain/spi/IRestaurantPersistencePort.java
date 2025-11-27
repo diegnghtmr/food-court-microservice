@@ -8,5 +8,7 @@ public interface IRestaurantPersistencePort {
 
     List<RestaurantModel> getAllRestaurants();
 
+    List<RestaurantModel> getAllRestaurants(Integer page, Integer size);
+
     boolean existsByNameOrNit(String name, String nit);
 }

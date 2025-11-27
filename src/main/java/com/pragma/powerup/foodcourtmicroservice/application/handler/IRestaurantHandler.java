@@ -8,4 +8,6 @@ public interface IRestaurantHandler {
     RestaurantResponse createRestaurant(RestaurantRequest restaurantRequest);
 
     List<RestaurantResponse> getRestaurants();
+    
+    List<RestaurantResponse> getRestaurants(Integer page, Integer size);
 }
