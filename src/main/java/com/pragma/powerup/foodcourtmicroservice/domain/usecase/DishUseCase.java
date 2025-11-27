@@ -24,9 +24,7 @@ public class DishUseCase implements IDishServicePort {
         }
 
         // 2. Validate Ownership
-        if (!restaurant.getOwnerId().equals(requestOwnerId)) {
-            throw new IllegalStateException("User is not the owner of this restaurant");
-        }
+        validateOwnership(restaurant, requestOwnerId);
 
         // 3. Validate Category existence
         CategoryModel category = dishPersistencePort.getCategoryById(dishModel.getCategoryId());
@@ -35,14 +33,45 @@ public class DishUseCase implements IDishServicePort {
         }
         
         // 4. Validate Price
-        if (dishModel.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
-             throw new IllegalArgumentException("Price must be greater than 0");
-        }
+        validatePrice(dishModel.getPrice());
 
         // 5. Set Initial State
         dishModel.setActive(true);
 
         // 6. Save
         return dishPersistencePort.saveDish(dishModel);
+    }
+
+    @Override
+    public DishModel updateDish(Long id, DishModel dishModel, Long requestOwnerId) {
+        DishModel existingDish = dishPersistencePort.getDishById(id);
+        if (existingDish == null) {
+            throw new IllegalArgumentException("Dish not found");
+        }
+
+        RestaurantModel restaurant = dishPersistencePort.getRestaurantById(existingDish.getRestaurantId());
+        if (restaurant == null) {
+            throw new IllegalArgumentException("Restaurant not found");
+        }
+
+        validateOwnership(restaurant, requestOwnerId);
+        validatePrice(dishModel.getPrice());
+
+        existingDish.setPrice(dishModel.getPrice());
+        existingDish.setDescription(dishModel.getDescription());
+
+        return dishPersistencePort.saveDish(existingDish);
+    }
+
+    private void validateOwnership(RestaurantModel restaurant, Long requestOwnerId) {
+        if (!restaurant.getOwnerId().equals(requestOwnerId)) {
+            throw new IllegalStateException("User is not the owner of this restaurant");
+        }
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+             throw new IllegalArgumentException("Price must be greater than 0");
+        }
     }
 }

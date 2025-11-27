@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishUpdateRequest;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -25,5 +27,12 @@ public class DishHandler implements IDishHandler {
         DishModel dishModel = dishRequestMapper.toModel(dishRequest);
         DishModel createdDish = dishServicePort.createDish(dishModel, dishRequest.getOwnerId());
         return dishResponseMapper.toResponse(createdDish);
+    }
+
+    @Override
+    public DishResponse updateDish(Long id, DishUpdateRequest dishUpdateRequest) {
+        DishModel dishModel = dishRequestMapper.toModel(dishUpdateRequest);
+        DishModel updatedDish = dishServicePort.updateDish(id, dishModel, dishUpdateRequest.getOwnerId());
+        return dishResponseMapper.toResponse(updatedDish);
     }
 }

@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishUpdateRequest;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+
 @RestController
 @RequestMapping("/dishes")
 @RequiredArgsConstructor
@@ -37,5 +41,24 @@ public class DishRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public DishResponse createDish(@Valid @RequestBody DishRequest dishRequest) {
         return dishHandler.createDish(dishRequest);
+    }
+
+    @Operation(summary = "Update a dish", description = "Updates the price and description of an existing dish. Validates ownership.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Dish updated successfully"),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input data",
+            content = @Content(schema = @Schema(implementation = String.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Dish not found",
+            content = @Content(schema = @Schema(implementation = String.class))
+        )
+    })
+    @PutMapping("/{id}")
+    public DishResponse updateDish(@PathVariable Long id, @Valid @RequestBody DishUpdateRequest dishUpdateRequest) {
+        return dishHandler.updateDish(id, dishUpdateRequest);
     }
 }
