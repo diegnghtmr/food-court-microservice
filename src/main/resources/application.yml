@@ -27,6 +27,9 @@ springdoc:
     path: /swagger-ui.html
     operationsSorter: method
 
+jwt:
+  secret: ${JWT_SECRET:mySuperSecretKeyForJwtTokenValidationInFoodCourtMicroservice}
+
 clients:
   user-service:
     url: http://localhost:8090
