@@ -1,47 +1,26 @@
-package com.pragma.powerup.foodcourtmicroservice.domain.model;
+package com.pragma.powerup.foodcourtmicroservice.application.dto.request;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-public class DishModel {
-    private Long id;
+public class DishRequest {
+    @NotBlank(message = "Name is required")
     private String name;
+    @NotBlank(message = "Description is required")
     private String description;
+    @NotNull(message = "Price is required")
+    @Min(value = 1, message = "Price must be greater than 0")
     private BigDecimal price;
+    @NotBlank(message = "Image URL is required")
     private String urlImage;
+    @NotNull(message = "Restaurant ID is required")
     private Long restaurantId;
+    @NotNull(message = "Category ID is required")
     private Long categoryId;
-    private boolean active;
-
-    public DishModel() {
-    }
-
-    public DishModel(
-        Long id,
-        String name,
-        String description,
-        BigDecimal price,
-        String urlImage,
-        Long restaurantId,
-        Long categoryId,
-        boolean active
-    ) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.urlImage = urlImage;
-        this.restaurantId = restaurantId;
-        this.categoryId = categoryId;
-        this.active = active;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @NotNull(message = "Owner ID is required for validation")
+    private Long ownerId; // Temporary field as per prompt
 
     public String getName() {
         return name;
@@ -91,11 +70,11 @@ public class DishModel {
         this.categoryId = categoryId;
     }
 
-    public boolean isActive() {
-        return active;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 }
