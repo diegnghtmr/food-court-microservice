@@ -1,0 +1,44 @@
+services:
+  foodcourt-postgres:
+    image: postgres:16
+    container_name: foodcourt-postgres
+    environment:
+      POSTGRES_DB: food_court_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - foodcourt_postgres_data:/var/lib/postgresql/data
+    networks:
+      - foodcourt-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  foodcourt-microservice:
+    build: .
+    container_name: foodcourt-microservice
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://foodcourt-postgres:5432/food_court_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      CLIENTS_USER-SERVICE_URL: http://host.docker.internal:8090
+    depends_on:
+      foodcourt-postgres:
+        condition: service_healthy
+    networks:
+      - foodcourt-network
+    restart: on-failure
+
+networks:
+  foodcourt-network:
+    driver: bridge
+
+volumes:
+  foodcourt_postgres_data:
