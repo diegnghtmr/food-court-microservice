@@ -29,6 +29,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       CLIENTS_USER-SERVICE_URL: http://host.docker.internal:8090
+      JWT_SECRET: mySuperSecureSecretKeyForPragmaPowerUpProject2025
     depends_on:
       foodcourt-postgres:
         condition: service_healthy

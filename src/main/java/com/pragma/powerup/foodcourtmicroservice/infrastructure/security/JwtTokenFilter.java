@@ -34,7 +34,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (token != null && validateToken(token)) {
             String username = getUsername(token);
             List<String> roles = getRoles(token);
-            Long userId = getUserId(token); // Extract User ID
+            Long userId = getUserId(token);
 
             if (username != null) {
                 CustomUserDetails userDetails = new CustomUserDetails(username, null, roles.stream()

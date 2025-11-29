@@ -28,7 +28,7 @@ springdoc:
     operationsSorter: method
 
 jwt:
-  secret: ${JWT_SECRET:mySuperSecretKeyForJwtTokenValidationInFoodCourtMicroservice}
+  secret: ${JWT_SECRET:mySuperSecureSecretKeyForPragmaPowerUpProject2025}
 
 clients:
   user-service:
