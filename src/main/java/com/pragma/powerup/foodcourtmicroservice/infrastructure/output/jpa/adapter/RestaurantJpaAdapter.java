@@ -40,4 +40,9 @@ public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
     public boolean existsByNameOrNit(String name, String nit) {
         return restaurantRepository.existsByNameIgnoreCaseOrNit(name, nit);
     }
+
+    @Override
+    public RestaurantModel getById(Long id) {
+        return restaurantRepository.findById(id).map(restaurantEntityMapper::toModel).orElse(null);
+    }
 }

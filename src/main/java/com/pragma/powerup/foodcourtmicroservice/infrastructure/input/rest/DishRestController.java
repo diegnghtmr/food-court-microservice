@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishUpdateRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import com.pragma.powerup.foodcourtmicroservice.application.dto.request.DishActiveRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/dishes")
@@ -68,6 +70,11 @@ public class DishRestController {
         return dishHandler.updateDish(id, dishUpdateRequest);
     }
 
+    @PatchMapping("/{id}")
+    public DishResponse patchDish(@PathVariable Long id, @Valid @RequestBody DishUpdateRequest dishUpdateRequest) {
+        return dishHandler.updateDish(id, dishUpdateRequest);
+    }
+
     @Operation(summary = "Enable/Disable dish", description = "Updates the active state of a dish. Requires Owner role.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Dish active state updated"),
@@ -87,5 +94,25 @@ public class DishRestController {
             @RequestParam(defaultValue = "10") Integer size
     ) {
         return dishHandler.getDishesByRestaurant(idRestaurant, page, size);
+    }
+
+    @Operation(summary = "Toggle dish status (compat PATCH /status)", description = "Toggles the active flag for a dish.")
+    @PatchMapping("/{id}/status")
+    public DishResponse toggleDishStatus(@PathVariable Long id) {
+        DishResponse current = dishHandler.getDish(id);
+        if (current == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dish not found");
+        }
+        return dishHandler.updateDishActiveState(id, !current.isActive());
+    }
+
+    @Operation(summary = "Get dish by id")
+    @GetMapping("/{id}")
+    public DishResponse getDish(@PathVariable Long id) {
+        DishResponse response = dishHandler.getDish(id);
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Dish not found");
+        }
+        return response;
     }
 }

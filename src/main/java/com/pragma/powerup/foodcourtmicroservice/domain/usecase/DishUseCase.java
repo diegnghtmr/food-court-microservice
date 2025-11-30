@@ -93,6 +93,11 @@ public class DishUseCase implements IDishServicePort {
         return dishPersistencePort.getDishesByRestaurant(restaurantId, page, size);
     }
 
+    @Override
+    public DishModel getDish(Long id) {
+        return dishPersistencePort.getDishById(id);
+    }
+
     private void validateOwnership(RestaurantModel restaurant, Long requestOwnerId) {
         if (!restaurant.getOwnerId().equals(requestOwnerId)) {
             throw new IllegalStateException("User is not the owner of this restaurant");

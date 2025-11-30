@@ -1,5 +1,6 @@
 package com.pragma.powerup.foodcourtmicroservice.application.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 public class DishResponse {
@@ -7,6 +8,7 @@ public class DishResponse {
     private String name;
     private String description;
     private BigDecimal price;
+    @JsonProperty("imageUrl")
     private String urlImage;
     private Long restaurantId;
     private Long categoryId;

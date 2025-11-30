@@ -29,15 +29,19 @@ public class DishHandler implements IDishHandler {
 
     @Override
     public DishResponse createDish(DishRequest dishRequest) {
+        Long ownerId = getCurrentUserId();
+        if (dishRequest.getCategoryId() == null && dishRequest.getCategoryKey() != null) {
+            dishRequest.setCategoryId(resolveCategoryId(dishRequest.getCategoryKey()));
+        }
         DishModel dishModel = dishRequestMapper.toModel(dishRequest);
-        DishModel createdDish = dishServicePort.createDish(dishModel, dishRequest.getOwnerId());
+        DishModel createdDish = dishServicePort.createDish(dishModel, ownerId);
         return dishResponseMapper.toResponse(createdDish);
     }
 
     @Override
     public DishResponse updateDish(Long id, DishUpdateRequest dishUpdateRequest) {
         DishModel dishModel = dishRequestMapper.toModel(dishUpdateRequest);
-        DishModel updatedDish = dishServicePort.updateDish(id, dishModel, dishUpdateRequest.getOwnerId());
+        DishModel updatedDish = dishServicePort.updateDish(id, dishModel, getCurrentUserId());
         return dishResponseMapper.toResponse(updatedDish);
     }
 
@@ -55,5 +59,29 @@ public class DishHandler implements IDishHandler {
         return dishServicePort.getDishesByRestaurant(restaurantId, page, size).stream()
                 .map(dishResponseMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public DishResponse getDish(Long id) {
+        DishModel dish = dishServicePort.getDish(id);
+        return dish != null ? dishResponseMapper.toResponse(dish) : null;
+    }
+
+    private Long getCurrentUserId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof CustomUserDetails details) {
+            return details.getId();
+        }
+        throw new IllegalStateException("User not authenticated");
+    }
+
+    private Long resolveCategoryId(String categoryKey) {
+        return switch (categoryKey.toUpperCase()) {
+            case "ENTRADA" -> 1L;
+            case "PLATO_FUERTE" -> 2L;
+            case "POSTRE" -> 3L;
+            case "BEBIDA" -> 4L;
+            default -> null;
+        };
     }
 }

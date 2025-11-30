@@ -39,6 +39,11 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         return restaurantPersistencePort.getAllRestaurants(page, size);
     }
 
+    @Override
+    public RestaurantModel getRestaurant(Long id) {
+        return restaurantPersistencePort.getById(id);
+    }
+
     private void validateRestaurant(RestaurantModel restaurantModel) {
         if (restaurantModel == null) {
             throw new IllegalArgumentException("Restaurant information is required");

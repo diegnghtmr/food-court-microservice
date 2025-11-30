@@ -1,5 +1,6 @@
 package com.pragma.powerup.foodcourtmicroservice.application.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,13 +15,15 @@ public class DishRequest {
     @Min(value = 1, message = "Price must be greater than 0")
     private BigDecimal price;
     @NotBlank(message = "Image URL is required")
+    @JsonAlias("imageUrl")
     private String urlImage;
     @NotNull(message = "Restaurant ID is required")
     private Long restaurantId;
     @NotNull(message = "Category ID is required")
+    @JsonAlias("category")
     private Long categoryId;
-    @NotNull(message = "Owner ID is required for validation")
-    private Long ownerId; // Temporary field as per prompt
+    // Optional category key (e.g., ENTRADA) from frontend, mapped on handler if provided
+    private String categoryKey;
 
     public String getName() {
         return name;
@@ -70,11 +73,11 @@ public class DishRequest {
         this.categoryId = categoryId;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
+    public String getCategoryKey() {
+        return categoryKey;
     }
 
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
+    public void setCategoryKey(String categoryKey) {
+        this.categoryKey = categoryKey;
     }
 }

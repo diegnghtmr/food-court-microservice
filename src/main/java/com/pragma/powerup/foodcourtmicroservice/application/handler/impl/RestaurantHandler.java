@@ -35,4 +35,10 @@ public class RestaurantHandler implements IRestaurantHandler {
     public List<RestaurantResponse> getRestaurants(Integer page, Integer size) {
         return restaurantResponseMapper.toResponseList(restaurantServicePort.getRestaurants(page, size));
     }
+
+    @Override
+    public RestaurantResponse getRestaurant(Long id) {
+        RestaurantModel model = restaurantServicePort.getRestaurant(id);
+        return model != null ? restaurantResponseMapper.toResponse(model) : null;
+    }
 }

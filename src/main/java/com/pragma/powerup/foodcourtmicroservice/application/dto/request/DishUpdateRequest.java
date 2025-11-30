@@ -11,9 +11,6 @@ public class DishUpdateRequest {
     private BigDecimal price;
     @NotBlank(message = "Description is required")
     private String description;
-    @NotNull(message = "Owner ID is required for validation")
-    private Long ownerId;
-
     public BigDecimal getPrice() {
         return price;
     }
@@ -28,13 +25,5 @@ public class DishUpdateRequest {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
     }
 }

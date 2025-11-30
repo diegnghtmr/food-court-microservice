@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -50,5 +52,15 @@ public class RestaurantRestController {
             @RequestParam(defaultValue = "10") Integer size
     ) {
         return restaurantHandler.getRestaurants(page, size);
+    }
+
+    @Operation(summary = "Get restaurant by id")
+    @GetMapping("/{id}")
+    public RestaurantResponse getRestaurant(@PathVariable Long id) {
+        RestaurantResponse response = restaurantHandler.getRestaurant(id);
+        if (response == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+        }
+        return response;
     }
 }

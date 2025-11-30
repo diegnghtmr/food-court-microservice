@@ -9,4 +9,5 @@ public interface IDishServicePort {
     DishModel updateDish(Long id, DishModel dishModel, Long requestOwnerId);
     DishModel updateDishActiveState(Long id, boolean isActive, Long requestOwnerId);
     List<DishModel> getDishesByRestaurant(Long restaurantId, Integer page, Integer size);
+    DishModel getDish(Long id);
 }

@@ -12,4 +12,5 @@ public interface IDishHandler {
     DishResponse updateDish(Long id, DishUpdateRequest dishUpdateRequest);
     DishResponse updateDishActiveState(Long id, boolean isActive);
     List<DishResponse> getDishesByRestaurant(Long restaurantId, Integer page, Integer size);
+    DishResponse getDish(Long id);
 }
