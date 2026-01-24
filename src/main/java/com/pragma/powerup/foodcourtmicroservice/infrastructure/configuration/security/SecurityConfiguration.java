@@ -28,7 +28,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);
@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/restaurants").hasAnyRole("ADMINISTRADOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/restaurants/**").hasAnyRole("CLIENTE", "CLIENT")
-                        .requestMatchers(HttpMethod.GET, "/dishes/restaurant/**").hasAnyRole("CLIENTE", "CLIENT")
+                        .requestMatchers(HttpMethod.GET, "/dishes/restaurant/**").hasAnyRole("CLIENTE", "CLIENT", "PROPIETARIO", "OWNER", "EMPLEADO", "EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/dishes").hasAnyRole("PROPIETARIO", "OWNER")
                         .requestMatchers(HttpMethod.PUT, "/dishes/{id}").hasAnyRole("PROPIETARIO", "OWNER")
                         .requestMatchers(HttpMethod.PUT, "/dishes/{id}/active").hasAnyRole("PROPIETARIO", "OWNER")
