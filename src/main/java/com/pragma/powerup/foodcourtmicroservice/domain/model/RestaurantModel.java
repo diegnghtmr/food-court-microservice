@@ -8,6 +8,7 @@ public class RestaurantModel {
     private String nit;
     private String urlLogo;
     private Long ownerId;
+    private java.time.Instant createdAt;
 
     public RestaurantModel() {
     }
@@ -19,7 +20,8 @@ public class RestaurantModel {
         String phone,
         String nit,
         String urlLogo,
-        Long ownerId
+        Long ownerId,
+        java.time.Instant createdAt
     ) {
         this.id = id;
         this.name = name;
@@ -28,6 +30,7 @@ public class RestaurantModel {
         this.nit = nit;
         this.urlLogo = urlLogo;
         this.ownerId = ownerId;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -84,5 +87,13 @@ public class RestaurantModel {
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public java.time.Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(java.time.Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }

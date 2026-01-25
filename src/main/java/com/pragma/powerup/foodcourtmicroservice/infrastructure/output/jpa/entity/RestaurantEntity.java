@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Setter
@@ -41,4 +42,13 @@ public class RestaurantEntity {
 
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
+
+    @CreationTimestamp
+    @Column(
+        name = "created_at",
+        nullable = false,
+        updatable = false,
+        columnDefinition = "timestamp with time zone default now()"
+    )
+    private java.time.Instant createdAt;
 }

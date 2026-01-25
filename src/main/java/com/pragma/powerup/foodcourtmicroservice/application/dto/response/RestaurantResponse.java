@@ -8,6 +8,7 @@ public class RestaurantResponse {
     private String nit;
     private String urlLogo;
     private Long ownerId;
+    private java.time.Instant createdAt;
 
     public Long getId() {
         return id;
@@ -63,5 +64,13 @@ public class RestaurantResponse {
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public java.time.Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(java.time.Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }
