@@ -1,46 +1,74 @@
 # Food Court Microservice
 
-Core business service for restaurants, dishes, and categories in the Food Court system. It owns the catalog and restaurant ownership rules used by other services and the UI.
+![Java](https://img.shields.io/badge/Java-25-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-brightgreen)
+![Architecture](https://img.shields.io/badge/Architecture-Hexagonal-black)
+![Database](https://img.shields.io/badge/DB-PostgreSQL-blue)
 
-## System Context
-- Part of the Food Court microservices suite.
-- Validates owners and employees by calling the User service via OpenFeign.
-- Consumed by the Order service and the Food Court UI.
+Core catalog service for restaurants, dishes, and categories in the Food Court platform. It validates ownership and publishes a clean restaurant catalog to other services and the UI.
+
+## Table of Contents
+- [Overview](#overview)
+- [Responsibilities](#responsibilities)
+- [System Context](#system-context)
+- [Architecture](#architecture)
+- [Ports and Adapters](#ports-and-adapters)
+- [Data Store](#data-store)
+- [API](#api)
+- [Local Development](#local-development)
+- [System Diagrams](#system-diagrams)
+- [Related Repositories](#related-repositories)
+
+## Overview
+Food Court Microservice owns the restaurant catalog and dish management workflows. It validates owners and employees through the User service and exposes the catalog to the Order service and UI.
 
 ## Responsibilities
 - Manage restaurants and categories.
-- Manage dishes and availability.
-- Enforce owner-level access on catalog operations.
+- Manage dishes, pricing, and availability.
+- Enforce owner-level permissions for catalog changes.
 
-## Architecture (Hexagonal / Ports and Adapters)
-This service follows Hexagonal Architecture with explicit ports and adapters.
-- `domain/`: core models, business rules, ports, and use cases.
-- `application/`: DTOs, mappers, and handlers that orchestrate use cases.
-- `infrastructure/`: REST controllers, JPA adapters, Feign clients, security configuration, and JWT implementation.
+## System Context
+Inbound adapters:
+- REST API (Spring MVC) under `/foodcourt-api`.
 
-## Tech Stack
-- Spring Boot 4, Spring Security, JWT
-- Spring Data JPA + PostgreSQL
-- Spring Cloud OpenFeign
-- MapStruct, Springdoc OpenAPI
+Outbound adapters:
+- PostgreSQL via Spring Data JPA.
+- User service via OpenFeign.
+
+Consumers:
+- Order service and Food Court UI.
+
+## Architecture
+Hexagonal Architecture keeps business rules independent from frameworks.
+
+- Domain: models, use cases, and port interfaces.
+- Application: DTOs, mappers, and handlers that orchestrate use cases.
+- Infrastructure: REST controllers, JPA adapters, Feign clients, security, and configuration.
+
+Dependency rule: infrastructure depends on application and domain; domain has no framework dependencies.
+
+## Ports and Adapters
+- `IRestaurantPersistencePort` -> `RestaurantJpaAdapter`.
+- `IDishPersistencePort` -> `DishJpaAdapter`.
+- `IUserClientPort` -> `UserFeignAdapter`.
 
 ## Data Store
-- PostgreSQL (local default: `jdbc:postgresql://localhost:5432/food_court_db`)
+- PostgreSQL: `jdbc:postgresql://localhost:5432/food_court_db`
 
 ## API
 - Base URL: `http://localhost:8091/foodcourt-api`
 - Swagger UI: `http://localhost:8091/foodcourt-api/swagger-ui.html`
 
 ## Local Development
-1. Start the database: `docker compose up -d` (uses `docker-compose.yml`)
-2. Run the service: `./gradlew bootRun`
+1. Start database: `docker compose up -d`
+2. Run service: `./gradlew bootRun`
 3. Run tests: `./gradlew test`
 
 ## System Diagrams
 ![Project Architecture](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/project-architecture.png)
 ![SQL Entities Diagram](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/sql-entities-diagram.png)
-![Order Flow Diagram](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/order-flow-diagram.png)
 ![NoSQL Entities Diagram](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/nosql-entities-diagram.png)
+![Order Flow Diagram](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/order-flow-diagram.png)
 
 ## Related Repositories
 - [user-microservice](https://github.com/diegnghtmr/user-microservice)
