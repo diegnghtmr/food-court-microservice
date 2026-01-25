@@ -46,8 +46,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/restaurants").hasAnyRole("ADMINISTRADOR", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/restaurants/**").hasAnyRole("CLIENTE", "CLIENT")
-                        .requestMatchers(HttpMethod.GET, "/dishes/**").hasAnyRole("CLIENTE", "CLIENT", "PROPIETARIO", "OWNER", "EMPLEADO", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/restaurants/**").hasAnyRole("CLIENTE", "CLIENT", "ADMINISTRADOR", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/dishes/**").hasAnyRole("CLIENTE", "CLIENT", "PROPIETARIO", "OWNER", "EMPLEADO", "EMPLOYEE", "ADMINISTRADOR", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/dishes").hasAnyRole("PROPIETARIO", "OWNER")
                         .requestMatchers(HttpMethod.PUT, "/dishes/{id}").hasAnyRole("PROPIETARIO", "OWNER")
                         .requestMatchers(HttpMethod.PUT, "/dishes/{id}/active").hasAnyRole("PROPIETARIO", "OWNER")
