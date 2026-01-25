@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface IRestaurantRequestMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     RestaurantModel toModel(RestaurantRequest restaurantRequest);
 }
