@@ -1,86 +1,103 @@
-# Food Court Microservice
+<!-- markdownlint-disable-next-line MD041 -->
+<div align="center">
 
-![Java](https://img.shields.io/badge/Java-25-blue)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-brightgreen)
-![Architecture](https://img.shields.io/badge/Architecture-Hexagonal-black)
-![Database](https://img.shields.io/badge/DB-PostgreSQL-blue)
+<h1>Food Court — Catalog API</h1>
 
-Core catalog service for restaurants, dishes, and categories in the Food Court platform. It validates ownership and publishes a clean restaurant catalog to other services and the UI.
+<p><strong>One menu for restaurant owners, customers, and the service that checks each order.</strong></p>
 
-## Table of Contents
-- [Overview](#overview)
-- [Responsibilities](#responsibilities)
-- [System Context](#system-context)
-- [Architecture](#architecture)
-- [Ports and Adapters](#ports-and-adapters)
-- [Data Store](#data-store)
-- [API](#api)
-- [Local Development](#local-development)
-- [System Diagrams](#system-diagrams)
-- [Related Repositories](#related-repositories)
+<p>
+<a href="https://github.com/diegnghtmr/food-court-microservice/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/diegnghtmr/food-court-microservice/ci.yml?branch=main&style=for-the-badge&labelColor=1F1F28&label=CI" alt="CI"></a>
+<img src="https://img.shields.io/badge/Java-25-E0C15A?style=for-the-badge&labelColor=1F1F28" alt="Java 25">
+<img src="https://img.shields.io/badge/Spring%20Boot-4.0-E0C15A?style=for-the-badge&labelColor=1F1F28" alt="Spring Boot 4.0">
+<img src="https://img.shields.io/badge/PostgreSQL-16-E0C15A?style=for-the-badge&labelColor=1F1F28" alt="PostgreSQL 16">
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-7FB4CA?style=for-the-badge&labelColor=1F1F28" alt="License: MIT"></a>
+</p>
 
-## Overview
-Food Court Microservice owns the restaurant catalog and dish management workflows. It validates owners and employees through the User service and exposes the catalog to the Order service and UI.
+<p>
+<a href="https://diegnghtmr.me/en/work/food-court/"><strong>Case study</strong></a> &bull;
+<a href="#quick-start"><strong>Quick start</strong></a> &bull;
+<a href="#architecture"><strong>Architecture</strong></a> &bull;
+<a href="https://github.com/diegnghtmr/food-court-ui"><strong>Web app</strong></a>
+</p>
 
-## Responsibilities
-- Manage restaurants and categories.
-- Manage dishes, pricing, and availability.
-- Enforce owner-level permissions for catalog changes.
+</div>
 
-## System Context
-Inbound adapters:
-- REST API (Spring MVC) under `/foodcourt-api`.
+<p align="center"><img width="100%" alt="Food Court customer menu showing grouped dishes, prices, and add-to-cart buttons at Casa Guadua" src="docs/assets/client-menu.png"></p>
 
-Outbound adapters:
-- PostgreSQL via Spring Data JPA.
-- User service via OpenFeign.
+*The Food Court web app uses this API to load the available dishes for a restaurant.*
 
-Consumers:
-- Order service and Food Court UI.
+A dish can be listed on the menu one hour and unavailable the next. This service stores restaurants, categories, dishes, and availability, so the browser can display the menu and the Order API can check what the customer selected. Owners can update their own dishes without deleting items that are temporarily unavailable.
+
+## Features
+
+- **Restaurant records.** Register restaurants with an owner reference and expose them through list and detail endpoints.
+- **Categorized dishes.** Store menu items with a category, price, description, and image URL.
+- **Menu browsing.** List dishes by restaurant for the web app and expose item details for order validation.
+- **Availability controls.** Owners can change the active status of their own dishes without deleting them.
+- **Owner checks.** Restaurant creation uses the Identity API to look up an owner, and dish changes check the caller’s ownership.
+
+## Quick start
+
+Install JDK 25 and Docker with Compose. Start the database container and run Spring on the host, where the checked-in API URLs point. The Gradle wrapper supplies Gradle 9.2.1.
+
+```sh
+git clone https://github.com/diegnghtmr/food-court-microservice.git
+cd food-court-microservice
+docker compose up -d foodcourt-postgres
+./gradlew bootRun
+```
+
+API: `http://localhost:8091/foodcourt-api`. Open [Swagger UI](http://localhost:8091/foodcourt-api/swagger-ui.html) to inspect `/restaurants` and `/dishes`.
+
+| Name | Purpose | Default |
+| --- | --- | --- |
+| `SPRING_DATASOURCE_URL` | Catalog database JDBC URL | `jdbc:postgresql://localhost:5432/food_court_db` |
+| `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` | Database credentials | Local values in Spring config and Compose; override together for other environments |
+| `JWT_SECRET` | Secret used to verify Food Court JWTs | Local development value; use the same private signing configuration as Identity outside local development |
+
+Start [Identity](https://github.com/diegnghtmr/user-microservice#quick-start) to issue tokens for authenticated requests. As configured, the restaurant registration lookup calls `/users/{id}` on the Identity host, but Identity exposes `/user-api/user/{id}`. The case study uses a seeded restaurant to demonstrate menu browsing and checkout.
 
 ## Architecture
-Hexagonal Architecture keeps business rules independent from frameworks.
 
-- Domain: models, use cases, and port interfaces.
-- Application: DTOs, mappers, and handlers that orchestrate use cases.
-- Infrastructure: REST controllers, JPA adapters, Feign clients, security, and configuration.
+Spring MVC controllers call application handlers and domain use cases. The domain defines the ports; `RestaurantJpaAdapter` and `DishJpaAdapter` implement the persistence ports, and `UserFeignAdapter` implements `IUserClientPort`. The domain does not depend on Spring, JPA, or Feign.
 
-Dependency rule: infrastructure depends on application and domain; domain has no framework dependencies.
+```mermaid
+flowchart LR
+    Web["food-court-ui"] -->|"List restaurants and dishes"| API["Catalog REST API"]
+    Orders["order-microservice"] -->|"Look up restaurant and dish details"| API
+    API --> Rules["Restaurant and dish use cases"]
+    Rules -->|"JPA persistence ports"| DB["PostgreSQL: food_court_db"]
+    Rules -->|"Feign owner lookup"| Identity["user-microservice"]
+```
 
-## Ports and Adapters
-- `IRestaurantPersistencePort` -> `RestaurantJpaAdapter`.
-- `IDishPersistencePort` -> `DishJpaAdapter`.
-- `IUserClientPort` -> `UserFeignAdapter`.
+See the [system diagrams in the web repository](https://github.com/diegnghtmr/food-court-ui/tree/main/docs) for the wider service and data model.
 
-## Data Store
-- PostgreSQL: `jdbc:postgresql://localhost:5432/food_court_db`
+## Tech stack
 
-## API
-- Base URL: `http://localhost:8091/foodcourt-api`
-- Swagger UI: `http://localhost:8091/foodcourt-api/swagger-ui.html`
+| Layer | Technology |
+| --- | --- |
+| HTTP and security | Java 25, Spring Boot 4.0, Spring MVC, Spring Security, springdoc OpenAPI |
+| Integrations | Spring Cloud OpenFeign, MapStruct |
+| Persistence | Spring Data JPA, PostgreSQL 16 in the local stack |
+| Build and tests | Gradle 9.2.1, JUnit Platform, H2 |
 
-## Local Development
-1. Start database: `docker compose up -d`
-2. Run service: `./gradlew bootRun`
-3. Run tests: `./gradlew test`
+## Testing
 
-## System Diagrams
-![Project Architecture](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/project-architecture.png)
-_High-level system context showing actors, UI, services, and databases._
-![SQL Entities Diagram](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/sql-entities-diagram.png)
-_Relational model for users, restaurants, dishes, and orders in PostgreSQL._
-![NoSQL Entities Diagram](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/nosql-entities-diagram.png)
-_Document model for traceability events and order history in MongoDB._
-![Order Flow Diagram](https://raw.githubusercontent.com/diegnghtmr/food-court-ui/main/docs/order-flow-diagram.png)
-_Order lifecycle from pending to delivered or canceled, including state transitions._
+```sh
+./gradlew build
+```
 
-## Related Repositories
-- [user-microservice](https://github.com/diegnghtmr/user-microservice)
-- [food-court-microservice](https://github.com/diegnghtmr/food-court-microservice)
-- [order-microservice](https://github.com/diegnghtmr/order-microservice)
-- [traceability-microservice](https://github.com/diegnghtmr/traceability-microservice)
-- [food-court-ui](https://github.com/diegnghtmr/food-court-ui)
+[CI](.github/workflows/ci.yml) runs the build and tests on Temurin 25. Use `./gradlew test` for just the test task. The Spring context test uses the repository’s H2 profile rather than the local PostgreSQL container.
+
+## Related repositories
+
+| Repository | Role |
+| --- | --- |
+| [food-court-ui](https://github.com/diegnghtmr/food-court-ui) | Customer menus and owner dish management |
+| [user-microservice](https://github.com/diegnghtmr/user-microservice) | Accounts, roles, and owner lookup |
+| [order-microservice](https://github.com/diegnghtmr/order-microservice) | Validates restaurant and dish references before taking an order |
+| [traceability-microservice](https://github.com/diegnghtmr/traceability-microservice) | Order history and fulfillment reports |
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+Released under the [MIT License](LICENSE).
