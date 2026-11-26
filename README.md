@@ -49,17 +49,11 @@ docker compose up -d foodcourt-postgres
 
 API: `http://localhost:8091/foodcourt-api`. Open [Swagger UI](http://localhost:8091/foodcourt-api/swagger-ui.html) to inspect `/restaurants` and `/dishes`.
 
-| Name | Purpose | Default |
-| --- | --- | --- |
-| `SPRING_DATASOURCE_URL` | Catalog database JDBC URL | `jdbc:postgresql://localhost:5432/food_court_db` |
-| `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` | Database credentials | Local values in Spring config and Compose; override together for other environments |
-| `JWT_SECRET` | Secret used to verify Food Court JWTs | Local development value; use the same private signing configuration as Identity outside local development |
-
-Start [Identity](https://github.com/diegnghtmr/user-microservice#quick-start) to issue tokens for authenticated requests. As configured, the restaurant registration lookup calls `/users/{id}` on the Identity host, but Identity exposes `/user-api/user/{id}`. The case study uses a seeded restaurant to demonstrate menu browsing and checkout.
+Start [Identity](https://github.com/diegnghtmr/user-microservice#quick-start) to issue tokens for authenticated requests. The registration lookup does not match the Identity API’s route; the case study uses a seeded restaurant to demonstrate menu browsing and checkout. See the [endpoint reference](docs/reference.md#api-endpoints) for the route mismatch and the [database settings](docs/reference.md#data-store-and-environment) for overrides.
 
 ## Architecture
 
-Spring MVC controllers call application handlers and domain use cases. The domain defines the ports; `RestaurantJpaAdapter` and `DishJpaAdapter` implement the persistence ports, and `UserFeignAdapter` implements `IUserClientPort`. The domain does not depend on Spring, JPA, or Feign.
+Spring MVC controllers call application handlers and domain use cases. The domain owns menu and ownership rules; adapters handle PostgreSQL and the Feign owner lookup.
 
 ```mermaid
 flowchart LR
@@ -69,8 +63,6 @@ flowchart LR
     Rules -->|"JPA persistence ports"| DB["PostgreSQL: food_court_db"]
     Rules -->|"Feign owner lookup"| Identity["user-microservice"]
 ```
-
-See the [system diagrams in the web repository](https://github.com/diegnghtmr/food-court-ui/tree/main/docs) for the wider service and data model.
 
 ## Tech stack
 
@@ -88,6 +80,10 @@ See the [system diagrams in the web repository](https://github.com/diegnghtmr/fo
 ```
 
 [CI](.github/workflows/ci.yml) runs the build and tests on Temurin 25. Use `./gradlew test` for just the test task. The Spring context test uses the repository’s H2 profile rather than the local PostgreSQL container.
+
+## Documentation
+
+- [Catalog API reference](docs/reference.md) — REST endpoints, data store and environment, ports and adapters, and system diagrams.
 
 ## Related repositories
 
